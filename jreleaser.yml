@@ -13,8 +13,8 @@ project:
   tags:
     - mule
   java:
-    groupId: com.avioconsulting.mule
-    version: 8
+    groupId: edu.bethel.mule
+    version: 17
 
 release:
   github:
@@ -52,4 +52,4 @@ release:
 distributions:
   app-jar:
     artifacts:
-      - path: target/mulesoft-explorer-{{projectVersionNumber}}-mule-application.jar
+      - path: target/{{projectJavaArtifactId}}-{{projectVersionNumber}}-mule-application.jar
