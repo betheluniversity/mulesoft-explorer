@@ -32,7 +32,7 @@ on:
       - 'develop'
 jobs:
   Mule-Pipeline:
-    uses: betheluniversity/mulesoft-shared-workflows/.github/workflows/mule-main.yml@feature/init-workflows
+    uses: betheluniversity/mulesoft-shared-workflows/.github/workflows/main.yml@feature/init-workflows
     secrets: inherit
     with:
       tag-name: ${{ inputs.tag-name }}
