@@ -62,8 +62,8 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 	<avio-logger:config name="avio-logger-config"
 		doc:name="AVIO Logger Config"
 		doc:id="56b68f7f-14de-4c38-afb2-8feb9800c7b9"
-		applicationVersion="${api.version}" defaultCategory="${log.category}"
-		enableFlowLogs="true" flowLogLevel="INFO" environment="${env}" />
+		defaultCategory="${log.category}"
+		enableFlowLogs="true" flowLogLevel="INFO"/>
 
 	<http:request-config
 		name="http-request-postman-echo-config"
