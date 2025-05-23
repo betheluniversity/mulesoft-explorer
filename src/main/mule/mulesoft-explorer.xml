@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:avio-logger="http://www.mulesoft.org/schema/mule/avio-logger"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/avio-logger http://www.mulesoft.org/schema/mule/avio-logger/current/mule-avio-logger.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+">
+
+	<apikit:config name="mulesoft-explorer-config"
+		api="mulesoft-explorer.raml"
+		outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus"
+		disableValidations="false" />
+	<flow name="mulesoft-explorer-main">
+		<http:listener config-ref="cloudhub-https-listener"
+			path="/v1/*">
+			<http:response
+				statusCode="#[vars.httpStatus default 200]">
+				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
+			</http:response>
+			<http:error-response
+				statusCode="#[vars.httpStatus default 500]">
+				<http:body>#[payload]</http:body>
+				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
+			</http:error-response>
+		</http:listener>
+		<apikit:router
+			config-ref="mulesoft-explorer-config" />
+		<error-handler ref="global-error-handler" />
+	</flow>
+	<flow name="get:\test:mulesoft-explorer-config">
+		<avio-logger:log doc:name="Log"
+			doc:id="b6ca2c6f-067d-4305-8587-198f16c94af2"
+			config-ref="avio-logger-config" correlationId="#[correlationId]"
+			message="Hello World!" />
+		<flow-ref doc:name="test-sub-flow"
+			doc:id="0738af1a-58a5-4aea-9737-a3d6b1b72c5e" name="test-sub-flow" />
+	</flow>
+	<sub-flow name="test-sub-flow"
+		doc:id="e1810d6c-db5c-43ff-9aeb-5602c1ce0393">
+		<ee:transform doc:name="payload"
+			doc:id="0fa12d62-b2fc-466b-8a18-c71c0d9f1d9d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: 1
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

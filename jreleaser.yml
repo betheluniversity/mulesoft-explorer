@@ -1,0 +1,55 @@
+project:
+  name: mulesoft-explorer
+  longDescription: |
+    A mule application for testing and exploration
+  links:
+    homepage: https://github.com/betheluniversity/
+    documentation: https://github.com/betheluniversity/mulesoft-explorer/
+  authors:
+    - Tanner Sherman
+    - Armando Mejia
+  license: MIT
+  inceptionYear: 2024
+  tags:
+    - mule
+  java:
+    groupId: com.avioconsulting.mule
+    version: 8
+
+release:
+  github:
+    owner: 'betheluniversity'
+    overwrite: true
+    draft: false
+    sign: false
+    releaseName: '{{tagName}}'
+    skipTag: false
+    milestone:
+      close: false
+    changelog:
+      skipMergeCommits: true
+      formatted: ALWAYS
+      preset: conventional-commits
+      format: '- {{commitShortHash}} {{commitTitle}}'
+      contributors:
+        format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+      labelers:
+        - label: 'dependencies'
+          title: 'chore(deps):'
+          order: 130
+      categories:
+        - title: '⚙️  Dependencies'
+          key: 'dependencies'
+          order: 80
+          labels:
+            - 'dependencies'
+      hide:
+        categories:
+          - 'merge'
+        contributors:
+          - 'GitHub'
+
+distributions:
+  app-jar:
+    artifacts:
+      - path: target/mulesoft-explorer-{{projectVersionNumber}}-mule-application.jar

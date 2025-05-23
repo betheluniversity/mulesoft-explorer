@@ -1,0 +1,21 @@
+#%RAML 1.0
+title: MuleSoft Explorer
+version: v1
+description: |
+  MuleSoft application for testing and exploration
+
+protocols:
+  - HTTPS
+
+/test:
+  get:
+    description: Get test endpoint
+    responses:
+      200:
+        body:
+          application/json:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Hello"

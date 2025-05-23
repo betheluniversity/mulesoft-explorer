@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:avio-logger="http://www.mulesoft.org/schema/mule/avio-logger"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/avio-logger http://www.mulesoft.org/schema/mule/avio-logger/current/mule-avio-logger.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+">
+
+	<configuration
+		defaultErrorHandler-ref="global-error-handler" />
+
+	<!-- This Property is to use in various properties and Custom Logger to 
+		reference the environment (e.g. local, dev, etc) -->
+	<global-property doc:name="Global Property"
+		doc:id="dfaec442-840f-4591-b222-701bfff6c54c" name="env" value="local" />
+
+	<!-- This property's real value must be set at environment level, not here. -->
+	<global-property doc:name="Global Property"
+		doc:id="966da4dd-570c-4921-b005-e9d11b4defca" name="crypto.key"
+		value="abcdefgh12345678" />
+
+	<!-- Properties loaded using secure-properties:config in Mule 4.x now can 
+		only be addressed by adding a secure:: prefix to them. Since that is verbose 
+		and could limit portability (by requiring tests to know secure vs. not secure). 
+		We have both properties processors process the same files. That way non secure 
+		properties can be accessed the usual way and you only have to use secure:: 
+		for encrypted properties. -->
+	<configuration-properties
+		file="properties/${env}.api.properties" />
+	<configuration-properties
+		file="properties/common.api.properties" />
+
+	<secure-properties:config
+		name="Secure_Properties_Config_Env"
+		doc:name="Secure Properties Config"
+		doc:id="874e18fe-fefc-465e-a670-5dd470fdc937"
+		file="properties/${env}.api.properties" key="${crypto.key}" />
+
+	<api-gateway:autodiscovery
+		apiId="${auto-discovery.api-id}"
+		flowRef="mulesoft-explorer-main" doc:name="API Autodiscovery" />
+
+	<http:listener-config
+		name="cloudhub-https-listener" doc:name="CloudHub Worker Listener">
+		<http:listener-connection host="0.0.0.0"
+			protocol="HTTPS" port="${https.port}">
+		</http:listener-connection>
+	</http:listener-config>
+
+	<avio-logger:config name="avio-logger-config"
+		doc:name="AVIO Logger Config"
+		doc:id="56b68f7f-14de-4c38-afb2-8feb9800c7b9"
+		applicationVersion="${api.version}" defaultCategory="${log.category}"
+		enableFlowLogs="true" flowLogLevel="INFO" environment="${env}" />
+
+	<http:request-config
+		name="http-request-postman-echo-config"
+		doc:name="HTTP Request configuration"
+		doc:id="796aa626-7ee3-4611-9d42-b2e3901a393a">
+		<http:request-connection protocol="HTTPS"
+			host="postman-echo.com" />
+	</http:request-config>
+
+</mule>
