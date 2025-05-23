@@ -41,6 +41,8 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 		file="properties/${env}.api.properties" />
 	<configuration-properties
 		file="properties/common.api.properties" />
+	<configuration-properties
+		file="properties/project-app.properties" />
 
 	<secure-properties:config
 		name="Secure_Properties_Config_Env"
@@ -55,7 +57,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 	<http:listener-config
 		name="cloudhub-https-listener" doc:name="CloudHub Worker Listener">
 		<http:listener-connection host="0.0.0.0"
-			protocol="HTTPS" port="${https.port}">
+			port="${https.port}">
 		</http:listener-connection>
 	</http:listener-config>
 
